@@ -1,4 +1,4 @@
-import {loadGLTF, loadVideo} from "./libs/loader.js";
+import {loadVideo} from "./libs/loader.js";
 import {createChromaMaterial} from "./libs/chroma-video.js";
 
 
@@ -9,7 +9,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     const mindarThree = new window.MINDAR.IMAGE.MindARThree({
       container: document.querySelector("#container"),
-      imageTargetSrc: './assets/Kittens_Target.mind',
+      imageTargetSrc: './assets/Suriname_Target.mind',
       uiScanning: "#scanning",
     });
     
@@ -18,16 +18,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const light = new THREE.HemisphereLight( 0xffffff, 0xbbbbff, 1 );
     scene.add(light);
 
-    // 3d object
-    const gltf = await loadGLTF('./assets/Snowflakes.glb');
-    gltf.scene.scale.set(1, 1, 1);
-    gltf.scene.position.set(0, -0.2, 0.3);
-
-    const anchor = mindarThree.addAnchor(0);
-    anchor.group.add(gltf.scene);
-
+    
     //video1
-    const video1 = await loadVideo("./assets/Kittens_Cropped.mp4");
+    const video1 = await loadVideo("./assets/Suriname_Song.mp4");
     video1.setAttribute('loop', true);
     const v1texture = new THREE.VideoTexture(video1);
 
@@ -35,6 +28,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const v1material = createChromaMaterial(v1texture, 0x00ff00);
     const v1plane = new THREE.Mesh(v1geometry,v1material);
     v1plane.position.set(0,0,0);
+    const anchor = mindarThree.addAnchor(0);
     anchor.group.add(v1plane);
   
     
@@ -46,21 +40,18 @@ anchor.onTargetLost = () => {
 }
 
 
-const mixer = new THREE.AnimationMixer(gltf.scene);
-const action = mixer.clipAction(gltf.animations[0]);
-action.play();
 
-const clock = new THREE.Clock();
 
-    await mindarThree.start();
+await mindarThree.start();
     renderer.setAnimationLoop(() => {
-      const delta =clock.getDelta();
-      mixer.update(delta);
       renderer.render(scene, camera);
     });
   }
   start();
 });
+
+
+
 
 
 
